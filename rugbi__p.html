@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Això és rugbi! · CN Poble Nou</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#26364a;--paper:#f6f5ef;--card:#fffdf7;--sage:#c9d9a8;--g1:#2d6a3b;--g2:#285f35;--soft:#5c6b80;--cw:min(46rem,calc(100vw - 2rem));color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8ecf2;--paper:#14202c;--card:#1d2b3a;--g1:#1f5a2a;--g2:#1b4f25;--soft:#a9b6c6;color-scheme:dark}}
+:root[data-theme="dark"]{--ink:#e8ecf2;--paper:#14202c;--card:#1d2b3a;--g1:#1f5a2a;--g2:#1b4f25;--soft:#a9b6c6;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+html{font-size:clamp(18px,2.3vmin,48px)}
+html,body{height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif}
+.stage{position:relative;height:100%;overflow:hidden;background:var(--g1)}
+.world{transform-origin:0 0;position:absolute;inset:0;background:var(--g1);transition:transform 1s cubic-bezier(.65,0,.2,1),transform-origin 1s cubic-bezier(.65,0,.2,1)}
+.world svg{position:absolute;inset:0;width:100%;height:100%}
+.world::before{content:"";position:absolute;inset:-300%;background-color:rgba(0,0,0,.28);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 5vw,transparent 5vw 10vw)}
+.fv{display:none}
+.st{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);background:none;border:0;cursor:pointer;text-align:center;color:inherit;font:inherit}
+.em{display:block;margin:0 auto;width:clamp(72px,14vmin,130px);aspect-ratio:1;transition:transform .25s}
+.em svg{display:block;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 4px rgba(0,0,0,.28))}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.st{padding:.6rem;transition:opacity .35s}
+.st.cur{opacity:0;transition:opacity .35s .75s}
+.dot{display:block;width:.75rem;height:.75rem;margin:0 auto;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.28),0 2px 8px rgba(0,0,0,.45);transition:transform .25s,box-shadow .25s}
+.st:hover .dot,.st:focus-visible .dot{transform:scale(1.3);box-shadow:0 0 0 8px rgba(255,255,255,.32),0 2px 8px rgba(0,0,0,.45)}
+.st .lb{position:absolute;left:calc(50% + .9rem);top:50%;transform:translateY(-50%);margin-top:0}
+.st.l .lb{left:auto;right:calc(50% + .9rem)}
+.st:focus-visible{outline:3px solid #fff;outline-offset:6px;border-radius:16px}
+.lb{display:inline-block;margin-top:6px;color:#fff;font-size:.85rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;padding:3px 2px;border-bottom:1px solid rgba(255,255,255,.55);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.st:hover .lb,.st:focus-visible .lb{border-bottom-color:#fff}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.55),0 8px 20px rgba(0,0,0,.35)}50%{box-shadow:0 0 0 12px rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.35)}}
+.ball{position:absolute;font-size:clamp(20px,3vmin,30px);left:0;bottom:3%;animation:roll 14s linear infinite;pointer-events:none}
+@keyframes roll{0%{transform:translateX(-5vw) rotate(0)}100%{transform:translateX(105vw) rotate(1080deg)}}
+.top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:.9rem 1rem;pointer-events:none;z-index:5}
+.chip{background:var(--card);color:var(--ink);padding:8px 16px;border-radius:99px;font-weight:700;font-size:1rem;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.go{pointer-events:auto;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.7);cursor:pointer;padding:.5rem 1rem;border-radius:4px;font:inherit;font-weight:600;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase}
+.go:hover{background:rgba(255,255,255,.14)}
+.hint{position:absolute;left:50%;bottom:1rem;transform:translateX(-50%);z-index:5;color:rgba(255,255,255,.8);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;white-space:nowrap}
+.ttl{position:absolute;left:50%;top:.75rem;transform:translateX(-50%);font-family:"DIN Arabic Condensed","DIN Condensed","DIN Alternate","Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;font-size:clamp(34px,8vmin,150px);line-height:1;letter-spacing:.14em;padding-left:.14em;color:#fff;text-shadow:0 3px 18px rgba(0,0,0,.55);white-space:nowrap;pointer-events:none;text-align:center;text-transform:uppercase}
+.ttl button{pointer-events:auto;display:inline-flex;align-items:center;background:none;border:0;cursor:pointer;color:inherit;font:inherit;letter-spacing:inherit;text-shadow:inherit;padding:0;text-transform:inherit;transition:opacity .3s}
+.ttl button::after{content:"";order:-1;flex:none;width:.75rem;height:.75rem;margin:0 .5em 0 0;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.28),0 2px 8px rgba(0,0,0,.45);transition:transform .25s,box-shadow .25s}
+.ttl button:hover::after,.ttl button:focus-visible::after{transform:scale(1.3);box-shadow:0 0 0 8px rgba(255,255,255,.32),0 2px 8px rgba(0,0,0,.45)}
+.ttl button:focus-visible{outline:2px solid #fff;outline-offset:6px}
+.top .go{margin-left:auto}
+.logo{position:absolute;left:1rem;top:.75rem;height:clamp(48px,9vmin,110px);width:auto;pointer-events:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
+/* Banners: fons blanc, text negre, detalls #00a0df */
+.card{--card:#fff;--ink:#000;--soft:#000;background:#fff;color:#000;color-scheme:light}
+.card .k{color:#00a0df;font-weight:700;padding-right:2.6rem}
+.card h2,.card p,.card li,.card b,.nav span{color:#000}
+.card .bar{background:#00a0df}
+.card .vid{background:rgba(0,160,223,.08);border-color:#00a0df;color:#000}
+.card .cta{background:rgba(0,160,223,.12);border-left:4px solid #00a0df;border-radius:.5rem;color:#000}
+.card .nav{background:#fff;border-top:1px solid #00a0df}
+.card .nav button{background:#00a0df;color:#000}
+.card .x{background:#eee;color:#000}
+.card .x:hover{background:#00a0df}
+@media (max-aspect-ratio:1/1){.ttl{top:3.3rem;font-size:clamp(26px,8vw,100px);letter-spacing:.12em}}
+.shade{position:absolute;inset:0;background:rgba(10,20,15,.55);opacity:0;pointer-events:none;transition:opacity .5s .3s;z-index:6}
+.panel{position:absolute;inset:0;display:grid;grid-template-rows:minmax(0,1fr);place-items:start center;padding:1rem;padding-top:var(--pt,5rem);opacity:0;pointer-events:none;transition:opacity .45s .55s;z-index:7}
+.open .shade{opacity:1}
+.open .panel{opacity:1;pointer-events:auto}
+.open .hint{opacity:0}
+.open .top{z-index:8}
+.open .go{opacity:0;pointer-events:none}
+.cw{position:relative;width:var(--cw);height:calc(100% - 8px);display:flex;flex-direction:column}
+.card{position:relative;flex:1 1 auto;min-height:0;width:100%;overflow:hidden;background:var(--card);color:var(--ink);border-radius:.5rem;padding:2rem 2rem 1.25rem;box-shadow:0 24px 60px rgba(0,0,0,.45);transform:translateY(12px);transition:transform .5s .55s ease}
+.open .card{transform:translateY(0)}
+.k{font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--soft);margin-bottom:.4rem}
+.card h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:1.8rem;line-height:1.15;margin-bottom:.4rem;padding-right:2.6rem}
+.bar{width:3rem;height:.2rem;border-radius:9px;background:#aac07f;margin:.75rem 0 1rem}
+.card p{line-height:1.65;margin-bottom:.75rem}
+.card ul{padding-left:1.2rem;margin-bottom:.75rem}
+.card li{line-height:1.6;margin-bottom:.4rem}
+.card b{font-weight:700}
+.vid{display:grid;place-items:center;text-align:center;aspect-ratio:16/9;border-radius:.9rem;background:rgba(127,160,100,.18);border:2px dashed #aac07f;color:var(--soft);font-size:.95rem;padding:.75rem;margin:.4rem 0 .5rem}
+.vid video{width:100%;height:100%;border-radius:12px}
+.cta{background:rgba(170,192,127,.2);border-radius:.9rem;padding:.75rem .9rem;font-weight:600}
+.arr{position:absolute;top:50%;transform:translateY(-50%);width:2rem;height:5rem;padding:0;border:0;background:none;color:#000;opacity:.28;cursor:pointer;display:grid;place-items:center;transition:opacity .2s}
+.arr.l{left:0}.arr.r{right:0}
+.arr svg{width:1.4rem;height:1.4rem;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.arr:hover,.arr:focus-visible{opacity:.8}
+.arr:focus-visible{outline:2px solid #00a0df;outline-offset:-2px;border-radius:6px}
+.arr:disabled{visibility:hidden}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:.9rem;padding-top:.75rem;border-top:1px solid rgba(127,127,127,.25);position:sticky;bottom:-1.25rem;background:var(--card)}
+.nav button{background:var(--ink);color:var(--paper);border:0;border-radius:4px;padding:.55rem 1rem;cursor:pointer;font:inherit;font-weight:600;font-size:.9rem}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav span{color:var(--soft);font-size:.9rem}
+.x{position:absolute;right:.9rem;top:.75rem;width:2.4rem;height:2.4rem;border-radius:50%;border:0;background:rgba(127,127,127,.18);color:var(--ink);font-size:1.1rem;cursor:pointer}
+.pl [data-step]{visibility:hidden;opacity:0;transition:opacity .5s,visibility 0s .5s}
+.pl [data-step].on{visibility:visible;opacity:1;transition:opacity .5s}
+.pl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,17.5rem);gap:1.5rem;align-items:start}
+.pf{position:sticky;top:0}
+.pl .pt{font-size:.88em}
+.pl .pt p,.pl .pt li{font-size:.95rem;line-height:1.55;margin-bottom:.35rem}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:.5rem 0 1rem}
+.cbox{border:1px solid #ddd;border-radius:.6rem;padding:.75rem;min-width:0}
+.cols.pla{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;align-items:center}
+.cols.pla .pt1{grid-column:1;grid-row:1}
+.cols.pla .pt2{grid-column:1;grid-row:2}
+.cols.pla .pv1{grid-column:2;grid-row:1;align-self:end;margin:0}
+.cols.pla .pv2{grid-column:2;grid-row:2;align-self:start;margin:0}
+.cols.pla .pv1,.cols.pla .pv2{width:55%;justify-self:center}
+.card .vid.vp{width:min(100%,calc((100vh - 24rem)*16/9));min-width:min(100%,22rem);margin:.5rem auto .4rem}
+@media (max-aspect-ratio:1/1){.card .vid.vp{width:100%}}
+.card .vid.vt{width:45%;margin:.4rem auto .5rem}
+@media (max-aspect-ratio:1/1){.card .vid.vt{width:75%}}
+.card .rv:not(.on){visibility:hidden;opacity:0;pointer-events:none}
+.card .rv.on{animation:fi .5s}
+.card .vid.vs{width:min(100%,calc((100vh - 15rem)*16/9));margin:.4rem auto .5rem}
+@media (max-aspect-ratio:1/1){.card .vid.vs{width:100%}}
+.eq{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;width:min(100%,calc((100vh - 24rem)/.3));margin:.6rem auto .8rem}
+.eq .vid{margin:0}
+.eq img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+@media (max-aspect-ratio:1/1){.eq{grid-template-columns:1fr 1fr;gap:.5rem;width:100%}}
+.cols.vr{align-items:start}
+.cols.vr .vid{margin:0}
+@media (max-aspect-ratio:1/1){.cols.vr{grid-template-columns:1fr}.cols.vr .vid{width:80%;justify-self:center}}
+.cols.vr.tt .vid{width:70%;justify-self:center}
+@media (max-aspect-ratio:1/1){.cols.vr.tt .vid{width:60%}}
+.cols.pla p:last-child,.cols.pla ul:last-child{margin-bottom:0}
+@media (max-aspect-ratio:1/1){.cols.pla{grid-template-columns:1fr;grid-template-rows:none}.cols.pla .pt1,.cols.pla .pt2,.cols.pla .pv1,.cols.pla .pv2{grid-column:1;grid-row:auto;align-self:auto}.cols.pla .pv1,.cols.pla .pv2{width:55%;justify-self:center}}
+.card .cbox .vid{margin:0 0 .6rem;font-size:.8rem}
+.cbox p{margin-bottom:0;font-size:.9em}
+.cbox video{display:block}
+@media (max-aspect-ratio:1/1){.cols{gap:.6rem}.cbox{padding:.5rem}.card .cbox .vid{font-size:.7rem;padding:.3rem}.cbox p{font-size:.85em}}
+.pl .pt [data-step]:not(.on){display:none}.pl .pt [data-step].on{animation:fi .5s}
+.ph{position:relative;align-self:start;height:min(calc(100vh - 18rem),25.5rem)}.ph[hidden]{display:block;visibility:hidden}
+.ph img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;border-radius:.6rem;box-shadow:0 4px 14px rgba(0,0,0,.2);animation:fi .5s}
+.ph .vid{position:absolute;inset:0;margin:0;aspect-ratio:auto;animation:fi .5s}
+.camp{display:block;width:auto;max-width:100%;height:auto;max-height:calc(100vh - 18rem);margin:0 auto;border-radius:.6rem;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-aspect-ratio:1/1){.pl{grid-template-columns:1fr;gap:.5rem}.ph{height:auto;aspect-ratio:16/9;margin:.4rem 0}.ph[hidden]{display:none}.pf{position:static;max-width:17rem;margin:.25rem auto 0}.pl .pt [data-step]:not(.on){display:none}.pl .pt [data-step].on{animation:fi .5s}.camp{width:100%;max-height:none}}
+@media (max-aspect-ratio:1/1){
+  .fh{display:none}.fv{display:block}
+  .world::before{background-image:repeating-linear-gradient(180deg,rgba(255,255,255,.07) 0 5vh,transparent 5vh 10vh)}
+  .st{left:var(--mx);top:var(--my)}
+  .lb{padding:2px 8px}
+  .card{padding:1.5rem 1.75rem 1rem}.nav{bottom:-1rem}.nav button{padding:.55rem .8rem}
+  .hint{white-space:normal;text-align:center;width:max-content;max-width:90%}
+}
+@media not all and (max-aspect-ratio:1/1){
+  :root{--cw:88vw}
+}
+.ra svg{display:block;width:100%;height:auto;max-height:calc(100vh - 25rem);margin:0 auto;border-radius:.4rem}
+.vid{position:relative}.vid .fs{position:absolute;right:.5rem;top:.5rem;z-index:2;width:2.2rem;height:2.2rem;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:1.1rem;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}.vid .fs:hover,.vid .fs:focus-visible{background:#00a0df;color:#000}
+/* ===== Acabat professional ===== */
+body{font-family:"Barlow","Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.world::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.35) 100%)}
+.lb{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.18em;background:rgba(10,25,20,.38);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.28);border-bottom-color:rgba(255,255,255,.28);border-radius:99px;padding:.3rem .85rem;transition:background .25s,border-color .25s,color .25s}
+.st:hover .lb,.st:focus-visible .lb{background:#00a0df;border-color:#00a0df;color:#06202c;text-shadow:none}
+.go{border-radius:99px;background:#fff;color:#0b2a3a;border:0;padding:.6rem 1.3rem;font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1rem;font-weight:700;letter-spacing:.16em;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:background .2s,transform .2s}
+.go:hover{background:#00a0df;transform:translateY(-1px)}
+.hint{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:.95rem;font-weight:600;letter-spacing:.18em}
+.shade{background:rgba(8,18,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.card{border-radius:14px;border-top:5px solid #00a0df;padding:2.1rem 2.6rem 1.6rem;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.1)}
+.card .k{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:1.25rem;letter-spacing:.22em;margin-bottom:.2rem}
+.card .bar{width:3.5rem;height:3px;margin:.6rem 0 1.1rem}
+.card p,.card li{font-size:1.05rem;line-height:1.7;color:#16202b}
+.card li::marker{color:#00a0df}
+.card .vid{border-radius:12px;background:#f1f8fc;border:1.5px dashed rgba(0,160,223,.55);color:#4a6577}
+.card .vid video{border-radius:12px;background:#000;box-shadow:0 8px 24px rgba(0,30,50,.28)}
+.card .cbox{border:1px solid #e1ecf2;border-radius:12px;padding:1rem;background:#fff;box-shadow:0 3px 14px rgba(0,50,80,.07)}
+.card .cta{border-radius:10px;font-weight:600;padding:.9rem 1.1rem}
+.eq img{border-radius:10px;box-shadow:0 4px 14px rgba(0,30,50,.2)}
+.x{background:#eef3f6;color:#16202b;transition:background .2s,transform .2s}
+.x:hover{transform:rotate(90deg)}
+.arr{width:2.8rem;height:2.8rem;border-radius:50%;background:#fff;color:#0b2a3a;opacity:1;box-shadow:0 6px 18px rgba(0,0,0,.35);transition:background .2s,transform .2s}
+.arr:hover,.arr:focus-visible{opacity:1;background:#00a0df;transform:translateY(-50%) scale(1.07)}
+.arr.l{left:-1.4rem}.arr.r{right:-1.4rem}
+.arr svg{width:1.3rem;height:1.3rem}
+.arr:focus-visible{border-radius:50%;outline:2px solid #fff;outline-offset:3px}
+@media (max-aspect-ratio:1/1){.card{padding:1.5rem 1.6rem 1.2rem}.arr{width:2.3rem;height:2.3rem}.arr.l{left:-.6rem}.arr.r{right:-.6rem}.lb{font-size:.9rem;padding:.25rem .65rem}}
+@media (prefers-reduced-motion:reduce){.world,.card,.panel,.shade{transition-duration:.01s;transition-delay:0s}.em,.ball{animation:none}}
+/* ===== Portada ===== */
+.intro{position:fixed;inset:0;z-index:50;overflow:hidden;cursor:pointer;background:#0d2a1a;color:#fff;display:grid;place-items:center;text-align:center;-webkit-tap-highlight-color:transparent;transition:opacity .9s ease .25s,visibility 0s linear 1.15s}
+.intro .bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,20,14,.45) 0%,rgba(6,20,14,.25) 40%,rgba(6,20,14,.7) 100%),url("fotos/MARBELLA.jpg") center/cover no-repeat,linear-gradient(135deg,#1f5a2a,#0d2a1a);transform:scale(1);transition:transform 1.15s cubic-bezier(.65,0,.2,1)}
+.intro .in{position:relative;padding:0 1.5rem;transition:transform 1.15s cubic-bezier(.65,0,.2,1),opacity .6s ease}
+.intro img{display:block;height:clamp(64px,13vmin,130px);width:auto;margin:0 auto 1.2rem;filter:drop-shadow(0 3px 10px rgba(0,0,0,.5))}
+.intro h1{font-family:"DIN Arabic Condensed","DIN Condensed","DIN Alternate","Barlow Condensed","Arial Narrow",sans-serif;font-weight:700;text-transform:uppercase;font-size:clamp(3.4rem,15vmin,12rem);line-height:1.02;letter-spacing:.08em;text-shadow:0 4px 28px rgba(0,0,0,.55);max-width:100%;margin:0 auto;text-wrap:balance}
+.intro h1 span{display:block;color:#00a0df}
+.intro .sub{margin-top:1.2rem;font-family:"DIN Arabic Condensed","DIN Condensed","DIN Alternate","Barlow Condensed","Arial Narrow",sans-serif;font-weight:600;font-size:clamp(.65rem,1.5vmin,.9rem);letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.9);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+.intro.out{opacity:0;visibility:hidden;pointer-events:none}
+.intro.out .bg{transform:scale(1.9)}
+.intro.out .in{transform:scale(2.6);opacity:0}
+.stage{transform:scale(.94);transition:transform 1.15s cubic-bezier(.65,0,.2,1)}
+body.started .stage{transform:none}
+.intro:focus-visible{outline:3px solid #00a0df;outline-offset:-6px}
+/* ===== Mòbil vertical ===== */
+@media (max-aspect-ratio:1/1){
+.lb{font-size:.82rem;letter-spacing:.1em;padding:.22rem .6rem}
+.hint{width:calc(100% - 2rem);bottom:.55rem;white-space:normal;text-align:center;font-size:.8rem;letter-spacing:.12em;line-height:1.25;padding:.35rem .7rem;border-radius:99px;background:rgba(8,18,14,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.go{padding:.45rem 1rem;font-size:.9rem;letter-spacing:.12em}
+.cw{height:calc(100% - 3.4rem)}
+.card{padding:1.3rem 1.25rem 1rem;border-radius:12px}
+.card .k{font-size:1.05rem;letter-spacing:.16em}
+.card p,.card li{font-size:.95rem;line-height:1.55}
+.arr,.arr:hover,.arr:focus-visible{top:auto;bottom:-3.1rem;transform:none;width:2.6rem;height:2.6rem}
+.arr.l{left:calc(50% - 3.1rem);right:auto}
+.arr.r{left:calc(50% + .5rem);right:auto}
+.intro h1{font-size:clamp(3rem,17vw,6rem)}
+}
+@media (max-aspect-ratio:1/1) and (max-height:700px){
+.card p,.card li{font-size:.88rem;line-height:1.5}
+.card{padding:1.1rem 1.1rem .9rem}
+}
+@media (prefers-reduced-motion:reduce){.intro,.intro .bg,.intro .in,.stage{transition-duration:.01s;transition-delay:0s;animation:none}.intro .sub{animation:none}}
+
+/* ===== Polit visual ===== */
+.card{border-radius:20px;box-shadow:0 30px 80px rgba(0,20,40,.5),0 0 0 1px rgba(255,255,255,.4) inset;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:#00a0df;z-index:2}
+.card .k{display:inline-block;background:rgba(0,160,223,.12);color:#007bb0;padding:.25rem .75rem;border-radius:99px;font-size:.72rem;letter-spacing:.2em;margin-bottom:.2rem}
+.card .bar{width:3.5rem;height:.28rem;background:#00a0df;margin:.7rem 0 1rem}
+.card p,.card li{color:#1c2733}
+.card b{color:#005f87}
+.card .cbox{background:linear-gradient(180deg,#f7fbfd,#fff);border:1px solid rgba(0,160,223,.25);border-left:4px solid #00a0df;border-radius:14px;box-shadow:0 6px 18px rgba(0,60,90,.08)}
+.card .vid video{border-radius:14px;box-shadow:0 10px 28px rgba(0,30,50,.32)}
+.card .vid.hv{border:0;background:none;padding:0}
+.card .vid:not(.hv){border:2px dashed rgba(0,160,223,.5);background:rgba(0,160,223,.06);border-radius:14px}
+.card .cta{background:linear-gradient(135deg,rgba(0,160,223,.14),rgba(45,106,59,.12));border-left:5px solid #00a0df;border-radius:14px}
+.card ul li::marker{color:#00a0df}
+.card .nav{border-top:1px solid rgba(0,160,223,.3)}
+.card .nav button{background:linear-gradient(135deg,#00a0df,#0087bd);color:#fff;border-radius:99px;padding:.55rem 1.3rem;box-shadow:0 4px 12px rgba(0,120,170,.35);transition:transform .15s,box-shadow .15s}
+.card .nav button:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,120,170,.45)}
+.card .x{background:rgba(0,0,0,.06);transition:background .2s,transform .2s}
+.card .x:hover{background:#00a0df;color:#fff;transform:rotate(90deg)}
+.arr{color:#00a0df;opacity:.55}
+.arr:hover,.arr:focus-visible{opacity:1}
+.shade{background:radial-gradient(ellipse at center,rgba(6,30,45,.5),rgba(4,14,24,.8));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.dot{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 5px rgba(255,255,255,.28),0 2px 8px rgba(0,0,0,.45)}50%{box-shadow:0 0 0 11px rgba(255,255,255,.08),0 2px 8px rgba(0,0,0,.45)}}
+.lb{box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.top .go{border-radius:99px;padding:.32rem .95rem;background:rgba(8,24,16,.5);color:#fff;border:1px solid rgba(255,255,255,.42);box-shadow:0 2px 10px rgba(0,0,0,.28);font-family:inherit;font-size:.74rem;font-weight:600;letter-spacing:.14em;text-shadow:0 1px 6px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);transition:background .25s,border-color .25s,color .25s,transform .25s}
+.top .go:hover,.top .go:focus-visible{background:#00a0df;border-color:#00a0df;color:#06202c;text-shadow:none;transform:translateY(-1px)}
+.top .go:focus-visible{outline:2px solid #fff;outline-offset:3px}
+/* Diapositiva final */
+.fin{position:relative;text-align:center;color:#fff;border-radius:18px;padding:2.2rem 1.2rem 2rem;margin:.4rem 0 .2rem;overflow:hidden;background:radial-gradient(circle at 85% 15%,rgba(255,255,255,.18),transparent 45%),linear-gradient(180deg,rgba(0,100,150,.55) 0%,rgba(0,70,110,.72) 60%,rgba(0,50,85,.88) 100%),url("fotos/MARBELLA.jpg") center/cover no-repeat,linear-gradient(145deg,#00a0df 0%,#006d9c 100%);box-shadow:0 14px 34px rgba(0,70,110,.35)}
+.card .fin .f3{animation:finp 2.4s ease-in-out infinite}
+@keyframes finp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){.card .fin .f3{animation:none}}
+.fin>*{position:relative;z-index:1}
+.card .fin .fl{display:block;margin:0 auto .9rem;height:5rem;width:5rem;object-fit:contain;background:#fff;border-radius:50%;padding:.45rem;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.card .fin .f1{color:rgba(255,255,255,.92);font-size:1.15em;letter-spacing:.04em;margin-bottom:.2rem}
+.card .fin .f2{color:#fff;font-family:"Barlow Condensed","DIN Condensed","Arial Narrow",sans-serif;font-weight:800;font-size:2.7em;line-height:1.02;text-transform:uppercase;letter-spacing:.03em;margin:.1rem 0 1rem;text-shadow:0 3px 14px rgba(0,0,0,.3)}
+.card .fin .f2 b{color:#fff;display:inline-block;background:#fff;color:#006d9c;padding:.05em .4em;border-radius:.3em;margin-top:.15em;text-shadow:none}
+.card .fin .f3{display:inline-block;margin:0;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.55);border-radius:99px;padding:.5rem 1.4rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.9em}
+
+/* Diapositiva final · versió atractiva */
+.card .fin{padding:2.6rem 1.2rem 2.4rem;border:2px solid rgba(255,255,255,.35);box-shadow:0 18px 44px rgba(0,70,110,.45),inset 0 0 0 6px rgba(255,255,255,.08)}
+.fin::before{content:"";position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:3px solid rgba(255,255,255,.14);box-shadow:0 0 0 2.2rem rgba(255,255,255,.04),0 0 0 4.4rem rgba(255,255,255,.03);pointer-events:none}
+.card .fin .flw{position:relative;display:block;width:fit-content;margin:0 auto 1.1rem;animation:finin .8s cubic-bezier(.2,.8,.2,1) both,finfloat 4s ease-in-out 1s infinite}
+.card .fin .flw::before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.65) 0%,rgba(255,255,255,.18) 45%,transparent 70%);animation:finglow 3s ease-in-out infinite;z-index:-1}
+.card .fin .fl{display:block;margin:0;height:8.5rem;width:auto;max-width:11rem;object-fit:contain;background:none;border-radius:0;padding:0;box-shadow:none;filter:drop-shadow(0 8px 14px rgba(0,0,0,.4))}
+.card .fin .f1{font-size:1.2em;font-weight:600;letter-spacing:.06em;animation:finin .7s .25s both}
+.card .fin .f2{font-size:3.1em;animation:finin .7s .4s both}
+.card .fin .f2 span{display:inline-block;text-shadow:0 4px 18px rgba(0,0,0,.4)}
+.card .fin .f2 b{position:relative;overflow:hidden;background:linear-gradient(180deg,#fff,#e6f6fd);box-shadow:0 8px 22px rgba(0,0,0,.3),0 0 0 3px rgba(255,255,255,.35);transform:rotate(-2deg)}
+.card .fin .f2 b::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(0,160,223,.35),transparent);transform:skewX(-20deg);animation:finshine 3.6s 1.2s ease-in-out infinite}
+.card .fin .f3{font-size:1em;padding:.65rem 1.7rem;background:linear-gradient(180deg,#fff 0%,#dff3fc 100%);color:#006d9c;border:0;box-shadow:0 8px 20px rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.3);animation:finin .7s .6s both,finp 2.4s 1.4s ease-in-out infinite}
+.fin .fb{position:absolute!important;z-index:0!important;font-size:1.6rem;opacity:.28;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.fin .b1{left:7%;top:12%;animation:finspin 9s linear infinite}
+.fin .b2{right:8%;bottom:16%;font-size:2.2rem;animation:finspin 12s linear infinite reverse}
+.fin .b3{left:12%;bottom:9%;font-size:1.2rem;opacity:.2;animation:finspin 7s linear infinite}
+@keyframes finin{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes finfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes finglow{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes finshine{0%{left:-60%}55%,100%{left:130%}}
+@keyframes finspin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.card .fin *,.fin .fb,.card .fin .flw,.card .fin .flw::before,.card .fin .f2 b::after{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="intro" id="intro" role="button" tabindex="0" aria-label="Juga a rugby al CN Poble Nou. Fes clic per començar">
+  <div class="bg"></div>
+  <div class="in">
+    <img alt="" src="fotos/logo.png" onerror="this.remove()">
+    <h1>Juga a rugby <span>al CN Poble Nou</span></h1>
+    <div class="sub">Fes clic per començar</div>
+  </div>
+</div>
+<div class="stage" id="stage">
+  <div class="world" id="world">
+    <svg class="fh" viewBox="0 0 100 100" preserveAspectRatio="none" id="fh" aria-hidden="true"></svg>
+    <svg class="fv" viewBox="0 0 100 100" preserveAspectRatio="none" id="fv" aria-hidden="true"></svg>
+    
+  </div>
+  <div class="top">
+    <img class="logo" alt="CN Poble Nou" src="fotos/logo.png">
+    <h1 class="ttl"><button type="button" id="ttl" aria-label="Això és rugbi! Normes bàsiques">EL RUGBY</button></h1>
+    <button class="go" id="go">Visita guiada →</button>
+  </div>
+  <div class="hint">Toca una estació del camp per descobrir-la</div>
+  <div class="shade" id="shade"></div>
+  <div class="panel" id="panel" role="dialog" aria-modal="true"><div class="cw"><div class="card" id="card"></div><button type="button" class="arr l" id="pv" aria-label="Anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8"/></svg></button><button type="button" class="arr r" id="nx" aria-label="Següent"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8"/></svg></button></div></div>
+</div>
+<script>
+// Si tens el vídeo de highlights (20-30 s) allotjat a la mateixa web, posa’n aquí l’adreça (p. ex. "highlights.mp4").
+var VIDEO = "videos/highlights.mp4";
+// Vídeos de "Com es juga?": [assaig, xut a pals]. Posa-hi les adreces (p. ex. "assaig.mp4").
+var VIDEOS = ["videos/assaig.mp4", "videos/xut.mp4"];
+// Vídeos de "Com es placa": [primer, segon]. Posa-hi les adreces (p. ex. "placatge1.mp4").
+var VIDEOS_PLACA = ["videos/placaje.mp4"];
+// Vídeo de "La touch" (p. ex. "touch.mp4").
+var VIDEO_TOUCH = "videos/touch.mp4";
+// Vídeo de "La melé" (p. ex. "mele.mp4").
+var VIDEO_MELE = "videos/mele.mp4";
+// Vídeos de "El respecte": [primer, segon] (p. ex. "respecte1.mp4").
+var VIDEOS_RESPECTE = ["videos/arbrit.mp4", "videos/pasillo.mp4"];
+// Vídeos de "El 3r temps": [primer, segon] (p. ex. "tercertemps1.mp4").
+var VIDEOS_TERCER = ["videos/3temps.mp4", "videos/3temps2.mp4"];
+// Galeria de "L’equip" (4 imatges i 2 vídeos, en aquest ordre). Posa-hi les adreces (p. ex. "equip1.jpg", "equip-video1.mp4").
+var EQUIP_IMG = ["", "", "", ""];
+var EQUIP_VID = ["videos/Equip.mp4", "videos/equip2.mp4"];
+
+var S = [
+{i:"🏉",l:"Això és rugbi!",k:"Què sabeu de rugbi?",t:"Això és rugbi!",steps:1,b:
+`<div class="vid vs rv" data-step="1" id="vid">▶ Aquí hi anirà el vídeo de highlights<br>(assaigs, velocitat, contacte i celebracions)</div>`},
+{i:"👥",l:"Jugadors",k:"Qui juga",t:"Jugadors i posicions",steps:8,b:
+`<div class="pl"><div class="pt"><p>Cada equip té <b>15 jugadors</b> al camp: 8 davanters i 7 backs. I cada posició té la seva funció:</p>
+<ul><li data-step="1"><b>Primera línia:</b> pilars i talonador. Són la força de la melé.</li>
+<li data-step="2"><b>Segona línia:</b> els més alts; salten a les touches.</li>
+<li data-step="3"><b>Tercera línia:</b> placar, recuperar pilotes i córrer pel camp.</li>
+<li data-step="4"><b>Mig de melé:</b> connecta davanters i darreres; àgil i ràpid de cap.</li>
+<li data-step="5"><b>Obertura:</b> dirigeix el joc i decideix cap a on anem.</li>
+<li data-step="6"><b>Centres:</b> trenquen la defensa contrària.</li>
+<li data-step="7"><b>Ales:</b> els més ràpids; acostumen a acabar els assajos.</li>
+<li data-step="8"><b>Rere:</b> última línia de defensa; rep els xuts.</li></ul></div><div class="ph" hidden></div><div class="pf"><svg class="camp" viewBox="0 0 300 450" role="img" aria-label="Camp de rugbi amb les 15 posicions representades per samarretes blanques i blaves"><defs><pattern id="jp" width="10" height="8" patternUnits="userSpaceOnUse"><rect width="10" height="8" fill="#fff"/><rect width="10" height="4" fill="#00a0df"/></pattern><symbol id="jr" viewBox="0 0 40 40"><clipPath id="jc"><path d="M10 4 L16 2 Q20 7 24 2 L30 4 L39 13 L33 20 L29 16 L29 38 L11 38 L11 16 L7 20 L1 13 Z"/></clipPath><path d="M10 4 L16 2 Q20 7 24 2 L30 4 L39 13 L33 20 L29 16 L29 38 L11 38 L11 16 L7 20 L1 13 Z" fill="url(#jp)"/><rect x="0" y="0" width="40" height="8" fill="#000" clip-path="url(#jc)"/><path d="M10 4 L16 2 Q20 7 24 2 L30 4 L39 13 L33 20 L29 16 L29 38 L11 38 L11 16 L7 20 L1 13 Z" fill="none" stroke="#0b2a3a" stroke-width="1.2" stroke-linejoin="round"/></symbol></defs><rect width="300" height="450" rx="10" fill="#2d6a3b"/><rect y="24" width="300" height="402" fill="#fff" opacity=".05"/><rect y="24" width="300" height="67" fill="#000" opacity=".06"/><rect y="158" width="300" height="67" fill="#000" opacity=".06"/><rect y="292" width="300" height="67" fill="#000" opacity=".06"/><rect width="300" height="24" rx="10" fill="#000" opacity=".18"/><rect y="426" width="300" height="24" rx="10" fill="#000" opacity=".18"/><g stroke="#fff" stroke-width="1.6" opacity=".85" fill="none"><line x1="0" y1="24" x2="300" y2="24"/><line x1="0" y1="426" x2="300" y2="426"/><line x1="0" y1="225" x2="300" y2="225"/><line x1="0" y1="112" x2="300" y2="112" stroke-dasharray="8 6"/><line x1="0" y1="338" x2="300" y2="338" stroke-dasharray="8 6"/></g><g class="pj" data-step="1"><use href="#jr" x="81" y="53" width="38" height="38"/><circle cx="100" cy="74" r="8.5" fill="#fff"/><text x="100" y="74" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">1</text><use href="#jr" x="131" y="53" width="38" height="38"/><circle cx="150" cy="74" r="8.5" fill="#fff"/><text x="150" y="74" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">2</text><use href="#jr" x="181" y="53" width="38" height="38"/><circle cx="200" cy="74" r="8.5" fill="#fff"/><text x="200" y="74" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">3</text></g><g class="pj" data-step="2"><use href="#jr" x="106" y="106" width="38" height="38"/><circle cx="125" cy="127" r="8.5" fill="#fff"/><text x="125" y="127" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">4</text><use href="#jr" x="156" y="106" width="38" height="38"/><circle cx="175" cy="127" r="8.5" fill="#fff"/><text x="175" y="127" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">5</text></g><g class="pj" data-step="3"><use href="#jr" x="79" y="147" width="38" height="38"/><circle cx="98" cy="168" r="8.5" fill="#fff"/><text x="98" y="168" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">6</text><use href="#jr" x="183" y="147" width="38" height="38"/><circle cx="202" cy="168" r="8.5" fill="#fff"/><text x="202" y="168" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">7</text><use href="#jr" x="131" y="159" width="38" height="38"/><circle cx="150" cy="180" r="8.5" fill="#fff"/><text x="150" y="180" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">8</text></g><g class="pj" data-step="4"><use href="#jr" x="131" y="239" width="38" height="38"/><circle cx="150" cy="260" r="8.5" fill="#fff"/><text x="150" y="260" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">9</text></g><g class="pj" data-step="5"><use href="#jr" x="73" y="273" width="38" height="38"/><circle cx="92" cy="294" r="8.5" fill="#fff"/><text x="92" y="294" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">10</text></g><g class="pj" data-step="6"><use href="#jr" x="141" y="293" width="38" height="38"/><circle cx="160" cy="314" r="8.5" fill="#fff"/><text x="160" y="314" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">12</text><use href="#jr" x="193" y="313" width="38" height="38"/><circle cx="212" cy="334" r="8.5" fill="#fff"/><text x="212" y="334" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">13</text></g><g class="pj" data-step="7"><use href="#jr" x="17" y="353" width="38" height="38"/><circle cx="36" cy="374" r="8.5" fill="#fff"/><text x="36" y="374" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">11</text><use href="#jr" x="245" y="353" width="38" height="38"/><circle cx="264" cy="374" r="8.5" fill="#fff"/><text x="264" y="374" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">14</text></g><g class="pj" data-step="8"><use href="#jr" x="131" y="379" width="38" height="38"/><circle cx="150" cy="400" r="8.5" fill="#fff"/><text x="150" y="400" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="700" fill="#000" font-family="system-ui,sans-serif">15</text></g></svg></div></div>`},
+{i:"🎯",l:"Com es juga?",k:"L’objectiu",t:"Com es juga?",steps:2,b:
+`<p>L’objectiu és fer punts, i per fer-ho només has d’arribar darrere de la línia de l’equip contrari i deixar la pilota a terra.</p>
+<div class="cols">
+<div class="cbox rv" data-step="1"><div class="vid" id="vA">▶ Aquí hi anirà el vídeo de l’assaig</div><p><b>Assaig:</b> consisteix en recolzar la pilota a terra dins la línia de marca, i val <b>5 punts</b>.</p></div>
+<div class="cbox rv" data-step="2"><div class="vid" id="vX">▶ Aquí hi anirà el vídeo del xut a pals</div><p><b>Xut a pals:</b> després de cada assaig es fa un xut a pals que val <b>2 punts</b>.</p></div>
+</div>
+<p class="rv" data-step="2">Per arribar a assajar, has de correr i moure la pilota.</p>`},
+{i:"🏃",l:"Com s’avança",k:"Moure la pilota",t:"Com s’avança",steps:2,b:
+`<p>La norma més característica del rugbi és que la pilota <b>només es pot passar cap enrere</b>. Si algú la passa cap endavant, o li cau de les mans cap endavant, és un <b>avant</b>.</p>
+<div class="cols">
+<div class="cbox rv" data-step="1"><div class="ra" data-mode="ok" role="img" aria-label="Animació: quatre jugadors corren cap endavant i es passen la pilota cap enrere"></div><p>Com avancem, doncs? Corrent amb la pilota i passant-la ràpid cap als espais.</p></div>
+<div class="cbox rv" data-step="2"><div class="ra" data-mode="kick" role="img" aria-label="Animació: el 9 xuta la pilota cap endavant i el 13, que és per darrere, corre i l’agafa"></div><p>També es pot xutar, però només la pot agafar qui estigui per darrere de qui ha xutat. Si no, està <b>fora de joc</b>.</p></div>
+</div>`},
+{i:"💪",l:"Com es placa",k:"Parar el rival",t:"Com es placa",steps:1,b:
+`<p>Com frenem qui porta la pilota? Doncs placant-lo. Però per assegurar-nos que ningú es fa mal, hi ha normes que s’han de complir:</p>
+<div class="rv" data-step="1"><ul><li>Només es pot placar qui porta la pilota.</li><li>Mai per sobre de les espatlles: no val agafar pel coll.</li><li>Després de placar has de deixar anar el rival.</li></ul></div>
+<div class="vid vp rv" data-step="1" id="vP1">▶ Aquí hi anirà el vídeo del placatge</div>`},
+{i:"🙌",l:"La touch",k:"Fora del camp",t:"La touch",steps:1,b:
+`<p>Quan la pilota o el jugador que la porta surt per aquesta línia, el joc s’atura i es reprèn amb una <b>touch</b>.</p>
+<p>La touch és una de les jugades més característiques del rugbi: els jugadors dels dos equips s’alineen en dues files paral·leles i competeixen per recuperar la pilota que es llança entre elles. Els companys poden aixecar un jugador perquè arribi més amunt i pugui agafar-la.</p>
+<p>És una jugada que requereix coordinació, comunicació i estratègia, ja que cada equip intenta guanyar la possessió de la pilota per continuar atacant.</p>
+<div class="vid vt rv" data-step="1" id="vT">▶ Aquí hi anirà el vídeo de la touch</div>`},
+{i:"🫂",l:"La melé",k:"Tornar a començar",t:"La melé",steps:1,b:
+`<p>La <b>melé</b> és una de les formes de reprendre el joc en rugbi després d'un avant. Els vuit davanters de cada equip s'ajunten i s'empenyen els uns contra els altres, formant una estructura compacta amb l'objectiu de guanyar la possessió de la pilota.</p>
+<p>La pilota s'introdueix pel mig de les dues primeres línies i els jugadors intenten recuperar-la empenyent i utilitzant els peus per fer-la arribar al seu costat.</p>
+<div class="vid vt rv" data-step="1" id="vM">▶ Aquí hi anirà el vídeo de la melé</div>`},
+{i:"🟨",l:"El respecte",k:"Respecte",t:"El respecte",steps:2,b:
+`<p>Amb els placatges i els cops que rebem pot semblar un esport molt agressiu, però tot el contrari: el més important és el <b>respecte</b>. Respecte al rival, als companys i a l’àrbitre. Durant un partit, només el capità o la capitana pot parlar amb l’àrbitre. Si qualsevol altra persona es queixa d’una decisió, l’equip és castigat amb un penal i ha de retrocedir deu metres.</p>
+<p>El respecte al rival no s’acaba quan sona el xiulet final. Quan acaba el partit, els equips fan un passadís i aplaudeixen l’equip contrari.</p>
+<div class="cols vr rv" data-step="1">
+<div class="vid" id="vR1">▶ Aquí hi anirà el primer vídeo del respecte</div>
+<div class="vid rv" data-step="2" id="vR2">▶ Aquí hi anirà el segon vídeo del respecte</div>
+</div>`},
+{i:"🍽️",l:"El 3r temps",k:"Després del xiulet",t:"El 3r temps",steps:2,b:
+`<p>El <b>tercer temps</b> és una de les tradicions més especials del rugbi. Quan acaba el partit, els dos equips es reuneixen per compartir una estona junts, independentment del resultat.</p>
+<p>És un moment per parlar, menjar i beure alguna cosa, conèixer els jugadors de l’altre equip i celebrar l’esport que comparteixen. No importa qui hagi guanyat o perdut: tothom hi participa.</p>
+<p>El tercer temps representa alguns dels valors més importants del rugbi, com el respecte, la companyonia i l’esportivitat. Perquè en el rugbi, el partit acaba al camp, però el bon ambient continua fora d’ell.</p>
+<div class="cols vr tt rv" data-step="1">
+<div class="vid" id="vH1">▶ Aquí hi anirà el primer vídeo del 3r temps</div>
+<div class="vid rv" data-step="2" id="vH2">▶ Aquí hi anirà el segon vídeo del 3r temps</div>
+</div>`},
+{i:"🤝",l:"L’equip",k:"Junts",t:"L’equip",steps:1,b:
+`<p>Tots els esports col·lectius són d’equip, però al rugbi es nota més: no pots fer-ho tot sol. Si l’equip no t’ajuda, no avances. I si tu no l’ajudes, tampoc.</p>
+<p>Cadascú depèn dels altres, i per això es creen vincles tan forts, també fora del camp. Això porta a tenir un cercle social molt gran, amb molts plans: partits, sopars, viatges…</p>
+<div class="eq rv" data-step="1">
+<div class="vid" id="eV1">▶ Vídeo 1</div>
+<div class="vid" id="eV2">▶ Vídeo 2</div>
+</div>
+<p class="cta">El rugbi no és només un esport, és un espai de trobada. I per entrar-hi no cal saber res: només cal tenir ganes d’apuntar-s’hi.</p>`},
+{i:"🏉",l:"Vine a jugar!",k:"Ara et toca a tu",t:"Vine a jugar al Poble Nou",steps:0,b:
+`<div class="fin">
+<span class="fb b1" aria-hidden="true">🏉</span><span class="fb b2" aria-hidden="true">🏉</span><span class="fb b3" aria-hidden="true">🏉</span>
+<div class="flw"><img class="fl" src="fotos/logo2.png" alt="CN Poble Nou" onerror="this.remove()"></div>
+<p class="f1">Si vols provar el rugbi…</p>
+<p class="f2"><span>Vine a jugar</span><br><b>al Poble Nou!</b></p>
+<p class="f3">🏉 T’esperem al camp</p>
+</div>`}
+];
+// posicions [x,y] en horitzontal i [x,y] en vertical (mòbil), en %
+var POS=[[50,9,50,12],[18,26,24,22],[90,50,50,86],[34,74,74,38],[66,26,26,62],[14,88,84,54],[50,48,40,46],[72,74,72,70],[84,16,18,78],[28,52,56,30],[88,86,84,90]];
+
+function field(v){
+  var s='';
+  for(var i=0;i<10;i++){var a=i*10,f=i%2?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
+    s+=v?'<rect x="0" y="'+a+'" width="100" height="10" fill="'+f+'"/>':'<rect x="'+a+'" y="0" width="10" height="100" fill="'+f+'"/>';}
+  [[8,3,0],[92,3,0],[25,2,0],[75,2,0],[50,2,0],[40,1.5,1],[60,1.5,1]].forEach(function(l){
+    var d=l[2]?' stroke-dasharray="6 6"':'';
+    s+=(v?'<line x1="0" x2="100" y1="'+l[0]+'" y2="'+l[0]+'"':'<line y1="0" y2="100" x1="'+l[0]+'" x2="'+l[0]+'"')+' stroke="rgba(255,255,255,.7)" stroke-width="'+l[1]+'" vector-effect="non-scaling-stroke"'+d+'/>';});
+  return s;
+}
+function field(v){
+ function M(a,b){return v?[6+(b-12)*1.1,10+a*.9]:[a,b]}
+ function L(a1,b1,a2,b2,w,d){var p=M(a1,b1),q=M(a2,b2);return '<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(255,255,255,.78)" stroke-width="'+w+'" vector-effect="non-scaling-stroke"'+(d?' stroke-dasharray="'+d+'"':'')+'/>'}
+ var s='';
+ for(var i=0;i<10;i++){var a=i*10,f=i%2?'rgba(255,255,255,.05)':'rgba(0,0,0,.06)';s+=v?'<rect x="0" y="'+a+'" width="100" height="10" fill="'+f+'"/>':'<rect x="'+a+'" y="0" width="10" height="100" fill="'+f+'"/>'}
+ s+=L(1,12,99,12,3)+L(1,92,99,92,3)+L(1,12,1,92,3)+L(99,12,99,92,3);
+ [[8,3],[92,3],[26.5,2.4],[73.5,2.4],[50,2.4]].forEach(function(t){s+=L(t[0],12,t[0],92,t[1])});
+ [41.6,58.4].forEach(function(a){s+=L(a,12,a,92,1.6,'6 6')});
+ [17.7,86.3,29.1,74.9].forEach(function(b){s+=L(8,b,92,b,1.6,'7 7')});
+ [8,92].forEach(function(a){var p=M(a,48),q=M(a,56);s+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="#fff" stroke-width="4" vector-effect="non-scaling-stroke"/>'});
+ return s}
+var CB='#1d3557',CW='#f4f1e8',CY='#f2c230',CR='#a63d40',SK='#d8a47f',HR='#2b2118',LN2='<line x1="8" y1="86" x2="92" y2="86" stroke="#fff" stroke-width="3"/>';
+function pt(x,y,l,a){var r=a*Math.PI/180;return[x+l*Math.sin(r),y+l*Math.cos(r)]}
+function ch(p,s){var d='M'+p[0].toFixed(1)+' '+p[1].toFixed(1);s.forEach(function(q){p=pt(p[0],p[1],q[0],q[1]);d+='L'+p[0].toFixed(1)+' '+p[1].toFixed(1)});return d}
+function H(x,y,s,c,o){o=o||{};var l=o.l||0,g=o.g||[[10,4],[-10,-6]],a=o.a||[[-8,-4],[10,6]],w=o.w||9,sh=pt(0,0,18,180-l),hd=pt(sh[0],sh[1],8,180-l*1.1),t='';
+ g.forEach(function(q){t+='<path d="'+ch([0,0],[[11,q[0]],[11,q[1]]])+'" stroke="#1b2430" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'});
+ t+='<line x1="0" y1="0" x2="'+sh[0].toFixed(1)+'" y2="'+sh[1].toFixed(1)+'" stroke="'+c+'" stroke-width="'+w+'" stroke-linecap="round"/>';
+ a.forEach(function(q){t+='<path d="'+ch(sh,[[9,q[0]],[8,q[1]]])+'" stroke="'+SK+'" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'});
+ t+='<circle cx="'+hd[0].toFixed(1)+'" cy="'+hd[1].toFixed(1)+'" r="4.3" fill="'+SK+'"/><path d="M'+(hd[0]-4.3).toFixed(1)+' '+hd[1].toFixed(1)+'a4.3 4.3 0 0 1 8.6 0z" fill="'+HR+'"/>';
+ return '<g transform="translate('+x+' '+y+') scale('+(o.f?-s:s)+' '+s+')">'+t+(o.e||'')+'</g>'}
+function K(x,y,r,z){return '<g transform="translate('+x+' '+y+') rotate('+(r||-25)+') scale('+(z||1)+')"><ellipse rx="7.5" ry="4.8" fill="#7b4026"/><path d="M-3 -4.3Q0 0 -3 4.3M3 -4.3Q0 0 3 4.3M-3.5 0H3.5" stroke="#e9dccb" stroke-width=".8" fill="none"/><ellipse cx="-2" cy="-1.8" rx="3" ry="1" fill="rgba(255,255,255,.25)"/></g>'}
+var FIG2=[
+F('<path d="M30 14V84M70 14V84M30 50H70M50 50V86" stroke="#f4f1e8" stroke-width="3" stroke-linecap="round" fill="none"/>'+K(50,80,-18,2.2)),
+F(H(24,65,.95,CW,{w:7})+H(50,60,1.2,CB,{w:11})+H(78,68,.8,CR,{w:9})),
+F(LN2+H(34,70,1,CB,{l:84,g:[[-95,-100],[-88,-92]],a:[[72,62],[78,66]]})+K(73,79,10)),
+F(H(26,64,1,CB,{l:10,g:[[35,8],[-30,-60]],a:[[70,80],[75,85]]})+H(76,64,1,CW,{f:1,l:8,g:[[30,6],[-25,-55]],a:[[72,82],[78,88]]})+K(50,45,-30)+'<path d="M32 48Q50 28 68 48" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 4" fill="none" opacity=".8"/>'),
+F(H(40,80,.9,CB,{l:88,g:[[-92,-90],[-90,-86]],a:[[100,95],[95,90]]})+K(64,80,0,.9)+H(22,66,1,CW,{l:48,g:[[-8,-18],[14,2]],a:[[48,30],[38,22]]})+H(80,66,1,CW,{f:1,l:48,g:[[-8,-18],[14,2]],a:[[48,30],[38,22]]})),
+F(LN2+H(36,64,1,CB,{a:[[160,170],[150,165]]})+H(64,64,1,CW,{f:1,a:[[160,170],[150,165]]})+H(50,38,1,CB,{g:[[3,0],[-3,0]],a:[[172,176],[188,184]]})+K(50,5,0,.8)),
+F(H(50,58.5,1.25,CY,{w:10,a:[[150,165],[-12,-6]],e:'<rect x="3" y="-46" width="7" height="10" rx="1" fill="#f2c230" stroke="#222" stroke-width=".8" transform="rotate(12 6 -41)"/>'})),
+F(H(24,64,1,CB,{a:[[88,92],[-6,-4]]})+H(50,64,1,CB,{a:[[88,92],[-88,-92]]})+H(76,64,1,CB,{a:[[6,4],[-88,-92]]})),
+F(H(26,64,1,CB,{l:5,a:[[85,88],[-8,-4]]})+H(74,64,1,CW,{f:1,l:5,a:[[85,88],[-8,-4]]})+'<rect x="42.5" y="42.5" width="4.4" height="6.5" rx="1" fill="#e9c46a"/><rect x="53" y="42.5" width="4.4" height="6.5" rx="1" fill="#e9c46a"/><rect x="12" y="66" width="76" height="6" rx="1.5" fill="#7a5230"/><rect x="18" y="72" width="4" height="15" fill="#5a3b20"/><rect x="78" y="72" width="4" height="15" fill="#5a3b20"/><ellipse cx="38" cy="65" rx="7" ry="1.6" fill="#f4f1e8"/><ellipse cx="62" cy="65" rx="7" ry="1.6" fill="#f4f1e8"/>')
+];
+function field2(v){
+ function M(a,b){return v?[6+(b-12)*1.1,10+a*.9]:[a,b]}
+ var p=[M(1,12),M(99,12),M(99,92),M(1,92)],pr='M0 0H100V100H0Z M'+p.map(function(q){return q[0]+' '+q[1]}).join('L')+'Z',i,m='';
+ for(i=0;i<10;i++){m+=v?'<rect x="0" y="'+(i*10)+'" width="100" height="5" fill="rgba(255,255,255,.07)"/>':'<rect x="'+(i*10)+'" y="0" width="5" height="100" fill="rgba(255,255,255,.07)"/>'}
+ return '<defs><filter id="gr'+v+'" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="3.2" numOctaves="2" seed="'+(4+v)+'"/><feColorMatrix values="0 0 0 0 .05 0 0 0 0 .18 0 0 0 0 .06 0 0 0 .55 -.12"/></filter><radialGradient id="vg'+v+'" cx="50%" cy="50%" r="75%"><stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".42"/></radialGradient></defs>'+m+field(v)+'<path d="'+pr+'" fill-rule="evenodd" fill="rgba(0,0,0,.28)"/><rect width="100" height="100" filter="url(#gr'+v+')" opacity=".9"/><rect width="100" height="100" fill="url(#vg'+v+')"/>'}
+document.getElementById('fh').innerHTML=field2(0);
+document.getElementById('fv').innerHTML=field2(1);
+
+function P(x,y,c,s,r,e){return '<g transform="translate('+x+' '+y+') rotate('+(r||0)+') scale('+(s||1)+')"><circle cy="-22" r="5" fill="#f1c9a5"/><rect x="-6" y="-17" width="12" height="16" rx="4" fill="'+c+'"/><rect x="-5" y="-2" width="4" height="10" fill="#26364a"/><rect x="1" y="-2" width="4" height="10" fill="#26364a"/>'+(e||'')+'</g>'}
+function B(x,y,r,z){z=z||1;return '<ellipse cx="'+x+'" cy="'+y+'" rx="'+7*z+'" ry="'+4.5*z+'" fill="#8b4a2b" stroke="#fff" stroke-width=".8" transform="rotate('+(r||-25)+' '+x+' '+y+')"/>'}
+function F(s){return '<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="90" rx="36" ry="5" fill="rgba(0,0,0,.25)"/>'+s+'</svg>'}
+var N='#26364a',G='#aac07f',R='#c0504d',LN='<line x1="8" y1="86" x2="92" y2="86" stroke="#fff" stroke-width="3"/>',AU='<path d="M-6 -15L-12 -34M6 -15L12 -34" stroke="#f1c9a5" stroke-width="3" stroke-linecap="round"/>';
+var FIG=[
+F('<path d="M28 84V26M72 84V26M28 52H72M50 84V52" stroke="#fff" stroke-width="4" fill="none"/>'+B(50,72,-20,2.2)),
+F(P(26,76,N,1.1)+P(50,76,G,.8)+P(74,76,R,1.3)),
+F(LN+P(40,72,N,1,75)+B(74,78,10)),
+F(P(26,76,N,1.1)+P(74,76,G,1.1)+B(50,34,-30)+'<path d="M30 48Q50 22 70 48" stroke="#fff" stroke-width="2" stroke-dasharray="4 4" fill="none"/>'),
+F(P(46,86,R,1,90)+B(66,82)+P(24,80,N,1,28)+P(76,80,G,1,-28)),
+F(LN+P(38,78,N,.9)+P(62,78,G,.9)+P(50,56,R,.9,0,AU)+B(50,18,0,.8)),
+F(P(50,78,'#f2d13a',1.3,0,'<path d="M6 -15L16 -36" stroke="#f1c9a5" stroke-width="3" stroke-linecap="round"/><rect x="12" y="-52" width="9" height="13" rx="1" fill="#f2d13a" stroke="#222" stroke-width="1" transform="rotate(12 16 -45)"/>')),
+F(P(26,78,N,1)+P(50,78,G,1)+P(74,78,R,1)+'<path d="M26 63H74" stroke="#f1c9a5" stroke-width="3.5" stroke-linecap="round"/>'),
+F('<rect x="18" y="62" width="64" height="7" rx="2" fill="#8b5a2b"/><rect x="24" y="69" width="5" height="18" fill="#6b4220"/><rect x="71" y="69" width="5" height="18" fill="#6b4220"/><ellipse cx="50" cy="60" rx="12" ry="3.5" fill="#fff"/><rect x="30" y="50" width="7" height="12" rx="2" fill="#e9c46a"/><rect x="63" y="50" width="7" height="12" rx="2" fill="#e9c46a"/>'+P(10,78,N,.7)+P(90,78,R,.7))
+];
+var world=document.getElementById('world'),stage=document.getElementById('stage'),card=document.getElementById('card'),panel=document.getElementById('panel'),cur=-1,sts=[];
+S.forEach(function(o,n){if(n===0)return;
+  var b=document.createElement('button');b.className='st';b.type='button';
+  b.style.cssText='--x:'+POS[n][0]+'%;--y:'+POS[n][1]+'%;--mx:'+POS[n][2]+'%;--my:'+POS[n][3]+'%;--d:'+(n*0.3)+'s';
+  b.innerHTML='<span class="dot"></span><span class="lb">'+o.l+'</span>';
+  b.setAttribute('aria-label',o.t);
+  b.onclick=function(){openS(n)};
+  world.appendChild(b);sts[n]=b;
+});
+function sides(){var q=portrait();document.querySelectorAll('.st').forEach(function(b,i){var p=POS[i+1];b.classList.toggle('l',(q?p[2]:p[0])>(q?44:55))})}
+sides();addEventListener('resize',sides);
+function portrait(){return matchMedia('(max-aspect-ratio:1/1)').matches}
+var ttlBtn=document.getElementById('ttl'),TITLE0=ttlBtn.textContent,ttlWant=TITLE0,tTimer,ttlProbe;
+(function(){var h=ttlBtn.parentNode.cloneNode(true),b=h.querySelector('button');b.removeAttribute('id');b.tabIndex=-1;b.style.pointerEvents='none';
+ h.setAttribute('aria-hidden','true');h.style.visibility='hidden';ttlBtn.parentNode.parentNode.insertBefore(h,ttlBtn.parentNode.nextSibling);ttlProbe=b})();
+function titleFor(n){return n>0?S[n].l:TITLE0}
+function place(n){
+  var q=portrait(),p=POS[n],W=stage.clientWidth,fs=parseFloat(getComputedStyle(document.documentElement).fontSize),K=2.6;
+  ttlProbe.textContent=titleFor(n);
+  var r=ttlProbe.getBoundingClientRect(),sr=stage.getBoundingClientRect(),
+      tx=r.left-sr.left+fs*.375,ty=r.top-sr.top+r.height/2,
+      px=(q?p[2]:p[0])/100*W,py=(q?p[3]:p[1])/100*stage.clientHeight;
+  if(n===0){px=tx;py=ty}
+  world.style.transform='translate('+(tx-K*px).toFixed(1)+'px,'+(ty-K*py).toFixed(1)+'px) scale('+K+')';
+  panel.style.setProperty('--pt',(r.bottom-sr.top+fs*1.5).toFixed(1)+'px');
+}
+function swapTitle(txt,delay){
+  if(ttlWant===txt)return;
+  ttlWant=txt;clearTimeout(tTimer);ttlBtn.style.opacity=0;
+  tTimer=setTimeout(function(){ttlBtn.textContent=txt;ttlBtn.style.opacity=1},delay);
+}
+function fillVid(id,u,m){var e=document.getElementById(id);if(!u||!e)return;e.classList.add('hv');
+  e.innerHTML='<video controls playsinline'+(m?' muted':'')+' src="'+u+'"></video><button type="button" class="fs" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>';
+  var v=e.querySelector('video');
+  e.querySelector('.fs').onclick=function(){var f=v.requestFullscreen||v.webkitRequestFullscreen||v.webkitEnterFullscreen;if(f)f.call(v)}}
+// Ajusta tot el contingut de la fitxa a la pantalla (sense barra de desplaçament):
+// si no hi cap, es redueix proporcionalment (text, imatges, vídeos i marges).
+var fitRO=null,fitBusy=false;
+function fitCard(){
+  var c=card.querySelector('.cin');if(!c)return;
+  var cs=getComputedStyle(card),aw=card.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight),ah=card.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  if(aw<=0||ah<=0)return;
+  c.style.transformOrigin='0 0';
+  function set(z){c.style.width=(aw/z)+'px';c.style.transform=z<1?'scale('+z+')':'none'}
+  set(1);
+  if(c.offsetHeight>ah){var lo=.3,hi=1;for(var i=0;i<10;i++){var m=(lo+hi)/2;set(m);if(c.offsetHeight*m<=ah)lo=m;else hi=m}set(lo)}
+}
+function watchFit(){
+  if(!window.ResizeObserver)return;
+  if(!fitRO)fitRO=new ResizeObserver(function(){if(fitBusy)return;fitBusy=true;requestAnimationFrame(function(){fitCard();fitBusy=false})});
+  fitRO.disconnect();fitRO.observe(card);var c=card.querySelector('.cin');if(c)fitRO.observe(c);
+}
+window.addEventListener('resize',fitCard);
+function openS(n,k){
+  cur=n;place(n);swapTitle(titleFor(n),800);
+  sts.forEach(function(b,i){b.classList.toggle('cur',i===n)});
+  stopVideos();
+  var o=S[n];
+  panel.setAttribute('aria-label',o.t);
+  card.innerHTML='<button class="x" id="cx" aria-label="Tancar">✕</button><div class="cin"><div class="k">'+o.k+'</div><div class="bar"></div>'+o.b+'</div>';
+  if(n===0)fillVid('vid',VIDEO);
+  if(n===2){fillVid('vA',VIDEOS[0]);fillVid('vX',VIDEOS[1])}
+  if(n===4){fillVid('vP1',VIDEOS_PLACA[0],true);fillVid('vP2',VIDEOS_PLACA[1])}
+  if(n===5)fillVid('vT',VIDEO_TOUCH);
+  if(n===6)fillVid('vM',VIDEO_MELE);
+  if(n===7){fillVid('vR1',VIDEOS_RESPECTE[0]);fillVid('vR2',VIDEOS_RESPECTE[1])}
+  if(n===8){fillVid('vH1',VIDEOS_TERCER[0]);fillVid('vH2',VIDEOS_TERCER[1])}
+  if(n===9){fillVid('eV1',EQUIP_VID[0]);fillVid('eV2',EQUIP_VID[1])}
+  raStop();if(n===3)raStart();
+  card.scrollTop=0;stage.classList.add('open');
+  document.getElementById('cx').onclick=closeS;
+  document.getElementById('pv').onclick=goPrev;
+  document.getElementById('nx').onclick=goNext;
+  sub=(typeof k==='number')?k:0;applySub();
+  fitCard();watchFit();
+}
+// Fotos de "Jugadors": una per posició, en l’ordre dels passos. Posa els fitxers a la carpeta "fotos" (al costat d’aquest HTML)
+// o canvia aquí les adreces. Si una foto no existeix, es mostra un requadre amb el nom de la posició.
+var PHOTOS=[
+ {src:"fotos/1.jpg",n:"Primera línia"},
+ {src:"fotos/2.jpg",n:"Segona línia"},
+ {src:"fotos/3.jpg",n:"Tercera línia"},
+ {src:"fotos/9.jpg",n:"Mig de melé"},
+ {src:"fotos/10.jpg",n:"Obertura"},
+ {src:"fotos/12.jpg",n:"Centres"},
+ {src:"fotos/11.jpg",n:"Ales"},
+ {src:"fotos/15.jpg",n:"Rere"}
+];
+function showPhoto(){
+  var ph=card.querySelector('.ph');if(!ph)return;
+  var d=PHOTOS[sub-1];
+  if(!d){ph.hidden=true;ph.removeAttribute('data-s');ph.innerHTML='';return}
+  ph.hidden=false;
+  if(ph.getAttribute('data-s')==String(sub))return;
+  ph.setAttribute('data-s',sub);ph.innerHTML='';
+  var im=new Image();im.alt=d.n;
+  im.onerror=function(){ph.innerHTML='';var v=document.createElement('div');v.className='vid';v.textContent='📷 Aquí hi anirà la foto: '+d.n;ph.appendChild(v)};
+  im.src=d.src;ph.appendChild(im);
+}
+
+// Animacions de "Com s'avança": mode "ok" (pas enrere) i "err" (avant).
+var RA={list:[],raf:0,last:null};
+function raInit(host){
+  var NS='http://www.w3.org/2000/svg',mode=host.getAttribute('data-mode'),X=[585,475,365,255],NUM=[9,10,12,13];
+  var Y0=[320,345,370,395],R=[0.18,0.43,0.68];
+  var F=0.14,RUN=190,TK=0.25,FL=0.45,Y13=150; // Y13: on acaba el 13 a l'animació del xut
+  var END=1,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 480 280');svg.setAttribute('aria-hidden','true');
+  host.appendChild(svg);
+  var G=document.createElementNS(NS,'g');G.setAttribute('transform','translate(-96,-56) scale(.8)');svg.appendChild(G); // camp horitzontal, jugadors corren cap amunt
+  function mk(tag,at,par){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);(par||G).appendChild(e);return e}
+  for(var i=0;i<9;i++)mk('rect',{x:0,y:70+i*40,width:720,height:40,fill:i%2?'#3A853A':'#3F8F3F'});
+  mk('line',{x1:0,y1:100,x2:720,y2:100,stroke:'#fff','stroke-width':2});
+  var tl=mk('text',{x:420,y:85,'text-anchor':'middle','dominant-baseline':'central','font-size':15,fill:'#fff','font-family':'system-ui,sans-serif'});tl.textContent='Línia de try rival';
+  mk('line',{x1:150,y1:410,x2:150,y2:350,stroke:'#fff','stroke-width':2.5,'stroke-linecap':'round'});
+  mk('path',{d:'M143 360L150 348L157 360',fill:'none',stroke:'#fff','stroke-width':2.5,'stroke-linecap':'round','stroke-linejoin':'round'});
+  var trails=[0,1,2,3].map(function(i){return mk('line',{x1:X[i],y1:Y0[i],x2:X[i],y2:Y0[i],stroke:'#fff','stroke-width':1,'stroke-dasharray':'3 4',opacity:.4})});
+  var ring=mk('circle',{r:20,fill:'none',stroke:'#FFD35C','stroke-width':2});
+  var bt=mk('polyline',{fill:'none',stroke:'#FFD35C','stroke-width':2,'stroke-dasharray':'5 4','stroke-linecap':'round','stroke-linejoin':'round'});
+  var pl=[0,1,2,3].map(function(i){var g=mk('g',{});mk('circle',{r:14,fill:'#2B6CD3',stroke:'#fff','stroke-width':1.5},g);
+    var tx=mk('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':16,'font-weight':600,fill:'#fff','font-family':'system-ui,sans-serif'},g);tx.textContent=NUM[i];return g});
+  var ball=mk('g',{});mk('ellipse',{rx:6,ry:9,fill:'#8A4B1C',stroke:'#fff','stroke-width':1},ball);mk('line',{x1:0,y1:-4,x2:0,y2:4,stroke:'#fff','stroke-width':1},ball);
+  function ease(s){return s<.5?2*s*s:1-Math.pow(-2*s+2,2)/2}
+  function pos(i,t){
+    if(mode==='kick'){
+      var a=RUN*Math.min(t,TK+FL);
+      if(i<3)return{x:X[i],y:Y0[i]-a};
+      return{x:X[3],y:Y0[3]+(Y13-Y0[3])*Math.min(t/(TK+FL),1)};
+    }
+    return{x:X[i],y:Y0[i]-RUN*Math.min(t,1)};
+  }
+  function hold(i,t){var p=pos(i,t);return{x:p.x,y:p.y-16}}
+  function bp(t){
+    if(mode==='kick'){
+      if(t<TK){var h=hold(0,t);return{x:h.x,y:h.y,z:1,fl:-1,tg:0}}
+      if(t<TK+FL){var s=(t-TK)/FL,a=hold(0,TK),e=hold(3,TK+FL);return{x:a.x+(e.x-a.x)*s,y:a.y+(e.y-a.y)*s,z:1+.8*Math.sin(Math.PI*s),fl:0,tg:3}}
+      var h3=hold(3,t);return{x:h3.x,y:h3.y,z:1,fl:-1,tg:3};
+    }
+    var done=0;
+    for(var i=0;i<R.length;i++){
+      if(t>=R[i]&&t<R[i]+F){var s2=ease((t-R[i])/F),a2=hold(i,t),b2=hold(i+1,t);return{x:a2.x+(b2.x-a2.x)*s2,y:a2.y+(b2.y-a2.y)*s2,z:1,fl:i,tg:i+1}}
+      if(t>=R[i]+F)done=i+1}
+    var h2=hold(done,t);return{x:h2.x,y:h2.y,z:1,fl:-1,tg:done}}
+  var inst={t:0,k:mode==='kick'?2:1,play:false,render:function(){
+    var t=this.t,b=bp(t),i;
+    for(i=0;i<4;i++){var p=pos(i,t);pl[i].setAttribute('transform','translate('+p.x+','+p.y+')');trails[i].setAttribute('x2',p.x);trails[i].setAttribute('y2',p.y)}
+    var pts=[];for(var s=0;s<=t+1e-6;s+=0.01){var q=bp(s);pts.push(q.x.toFixed(1)+','+q.y.toFixed(1))}pts.push(b.x.toFixed(1)+','+b.y.toFixed(1));bt.setAttribute('points',pts.join(' '));
+    ball.setAttribute('transform','translate('+b.x+','+b.y+') scale('+b.z+')');
+    var rp=pos(b.tg,t);ring.setAttribute('transform','translate('+rp.x+','+rp.y+')');ring.setAttribute('stroke-dasharray',b.fl>=0?'4 3':'0')},
+    end:END,still:reduce};
+  inst.render();RA.list.push(inst);
+  host.onclick=function(){if(sub>=inst.k&&!inst.still){inst.t=0;inst.play=true}};
+}
+function raLoop(ts){
+  if(!RA.list.length){RA.raf=0;return}
+  var dt=RA.last===null?0:(ts-RA.last)/1000;RA.last=ts;if(dt>.1)dt=.1;
+  RA.list.forEach(function(a){if(!a.play)return;a.t+=dt*0.12;if(a.t>=a.end){a.t=a.end;a.play=false}a.render()});
+  RA.raf=requestAnimationFrame(raLoop)}
+function raStop(){RA.list=[];RA.last=null;if(RA.raf){cancelAnimationFrame(RA.raf);RA.raf=0}}
+function raSync(){RA.list.forEach(function(a){
+  if(sub<a.k){a.t=0;a.play=false}
+  else if(sub>a.k||a.still){a.t=a.end;a.play=false}
+  else{a.t=0;a.play=true}
+  a.render()})}
+function raStart(){raStop();card.querySelectorAll('.ra').forEach(raInit);if(RA.list.length)RA.raf=requestAnimationFrame(raLoop)}
+var sub=0;
+function total(){return (cur>=0&&S[cur].steps)||0}
+// Reproducció automàtica: al pas actual es reprodueix el vídeo (o, si n'hi ha diversos al mateix pas,
+// un darrere l'altre); els vídeos d'altres passos s'aturen.
+function playVid(v){
+  v.currentTime=0;
+  var p=v.play();
+  if(p&&p.catch)p.catch(function(){v.muted=true;var q=v.play();if(q&&q.catch)q.catch(function(){})});
+}
+function syncVideos(){
+  var vs=card.querySelectorAll('video'),group=[];
+  for(var i=0;i<vs.length;i++){
+    var v=vs[i],st=v.closest('[data-step]'),n=st?+st.getAttribute('data-step'):0;
+    v.onended=null;
+    if(n===sub&&sub>0)group.push(v);else v.pause();
+  }
+  group.forEach(function(v,i){
+    var par=!!v.closest('.eq');
+    if(i===0||par)playVid(v);else v.pause();
+    if(i<group.length-1&&!par)v.onended=function(){playVid(group[i+1])};
+  });
+}
+function stopVideos(){
+  var vs=card.querySelectorAll('video');
+  for(var i=0;i<vs.length;i++){vs[i].onended=null;vs[i].pause()}
+}
+function applySub(){
+  var els=card.querySelectorAll('[data-step]');
+  for(var i=0;i<els.length;i++){els[i].classList.toggle('on',+els[i].getAttribute('data-step')<=sub)}
+  syncVideos();
+  showPhoto();
+  if(cur===3)raSync();
+  var pv=document.getElementById('pv'),nx=document.getElementById('nx');
+  if(pv)pv.disabled=(cur===0&&sub===0);
+  if(nx)nx.disabled=(cur===S.length-1&&sub>=total());
+}
+function showField(){
+  var f=card.querySelector('.pf');
+  
+}
+function goNext(){
+  if(cur<0)return;
+  if(sub<total()){sub++;applySub();showField();var nm=card.querySelector('.rv[data-step="'+sub+'"]');}else if(cur<S.length-1)openS(cur+1)
+}
+function goPrev(){
+  if(cur<0)return;
+  if(sub>0){sub--;applySub();showField()}else if(cur>0)openS(cur-1,S[cur-1].steps||0)
+}
+function closeS(){stopVideos();raStop();stage.classList.remove('open');world.style.transform='none';cur=-1;
+  sts.forEach(function(b){b.classList.remove('cur')});swapTitle(TITLE0,450)}
+document.getElementById('ttl').onclick=function(){if(cur>=0)closeS();else openS(0)};
+addEventListener('resize',function(){if(cur>=0)place(cur)});
+document.getElementById('go').onclick=function(){openS(0)};
+document.getElementById('shade').onclick=closeS;
+document.getElementById('panel').onclick=function(e){if(e.target.id==='panel')closeS()};
+document.addEventListener('keydown',function(e){
+  var nxt=e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown',prv=e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp';
+  if(cur<0){
+    // Des del camp, "següent" obre la primera fitxa (si la portada ja ha passat)
+    if(nxt&&document.body.classList.contains('started')){e.preventDefault();openS(0)}
+    return;
+  }
+  if(e.key==='Escape')closeS();
+  if(nxt){e.preventDefault();goNext()}
+  if(prv){e.preventDefault();goPrev()}
+});
+
+// Portada: al fer clic (o Enter/Espai) fa zoom i deixa veure el camp
+(function(){
+  var intro=document.getElementById('intro'),stage=document.getElementById('stage');
+  stage.setAttribute('inert','');
+  var done=false;
+  function start(){
+    if(done)return;done=true;
+    stage.removeAttribute('inert');
+    intro.classList.add('out');
+    document.body.classList.add('started');
+    setTimeout(function(){intro.remove()},1500);
+  }
+  intro.addEventListener('click',start);
+  intro.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'){e.preventDefault();start()}});
+  // També es pot començar amb la tecla "següent" (fletxa dreta/avall, AvPàg, comandament de presentació)
+  document.addEventListener('keydown',function(e){if(!done&&(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown')){e.preventDefault();start()}});
+  intro.focus();
+})();
+</script>
+</body>
+</html>
